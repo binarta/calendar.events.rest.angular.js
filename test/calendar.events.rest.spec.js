@@ -31,12 +31,14 @@ describe('calendar.events.rest', function() {
 
         describe('when writing', function() {
             var event = {};
-            var start = moment(1).toString();
-            var end = moment(1).toString();
+            var start = moment(1).format();
+            var end = moment(1).format();
+            var presenter = jasmine.createSpyObj('presenter', ['success']);
+
             beforeEach(function() {
                 event.start = start;
                 event.end = end;
-                writer(event, $scope);
+                writer(event, $scope, presenter);
             });
 
             it('then context is created', function() {
@@ -48,8 +50,8 @@ describe('calendar.events.rest', function() {
                 expect(context.params.withCredentials).toBeTruthy();
                 expect(context.params.url).toEqual('base-uri/api/entity/calendarevent');
                 expect(context.params.data).toEqual(event);
-                expect(context.params.data.start.toString()).toEqual(start);
-                expect(context.params.data.end.toString()).toEqual(end);
+                expect(context.params.data.start).toEqual(moment(start).toISOString());
+                expect(context.params.data.end).toEqual(moment(end).toISOString());
             });
 
             it('and rest call is executed', function() {
@@ -62,7 +64,7 @@ describe('calendar.events.rest', function() {
                 });
 
                 it('then event is fired', function() {
-                    expect(dispatcher['calendar.event.created']).toEqual('success');
+                    expect(presenter.success.calls[0]).toBeDefined();
                 })
             });
         });
@@ -155,9 +157,14 @@ describe('calendar.events.rest', function() {
 
         describe('when updating', function() {
             var event;
+            var start = moment().format(), end = moment().format();
 
             beforeEach(function() {
-                event = {id:'id'};
+                event = {
+                    id:'id',
+                    start: start,
+                    end: end
+                };
                 updater(event);
             });
 
@@ -170,6 +177,9 @@ describe('calendar.events.rest', function() {
                 expect(context.params.withCredentials).toBeTruthy();
                 expect(context.params.url).toEqual('base-uri/api/entity/calendarevent');
                 expect(context.params.data).toEqual(event);
+                expect(context.params.data).toEqual(event);
+                expect(context.params.data.start).toEqual(moment(start).toISOString());
+                expect(context.params.data.end).toEqual(moment(end).toISOString());
                 expect(context.params.data.context).toEqual('update');
             });
 
@@ -186,6 +196,46 @@ describe('calendar.events.rest', function() {
                     expect(topicMessageDispatcherMock['calendar.event.updated']).toEqual('success');
                 }));
             });
+        });
+    });
+
+    describe('given an event viewer', function() {
+        var viewer;
+        var id;
+
+        beforeEach(inject(function(calendarEventViewer, config) {
+            id = 'id';
+            config.baseUri = 'base-uri/';
+            config.namespace = 'namespace';
+            viewer = calendarEventViewer;
+            viewer(id, $scope);
+        }));
+
+        it('then context is created', function() {
+            expect(usecaseAdapter.calls[0].args[0]).toEqual($scope);
+        });
+
+        it('http params are populated', function() {
+            expect(context.params.method).toEqual('GET');
+            expect(context.params.headers['x-namespace']).toEqual('namespace');
+            expect(context.params.url).toEqual('base-uri/api/entity/calendarevent/'+id);
+        });
+
+        it('http call is executec', function() {
+            expect(rest.calls[0].args[0]).toEqual(context);
+        });
+
+        describe('on success', function() {
+            var payload;
+
+            beforeEach(function() {
+                payload = {};
+                context.success(payload);
+            });
+
+            it('payload gets put on scope as event', function() {
+                expect($scope.event).toEqual(payload);
+            })
         });
     });
 });
