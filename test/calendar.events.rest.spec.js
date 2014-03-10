@@ -104,10 +104,27 @@ describe('calendar.events.rest', function() {
                 expect(rest.calls[0].args[0]).toEqual(context);
             });
 
-            it('on success call presenter', function() {
-                var payload = {};
-                context.success(payload);
-                expect(presenter.calls[0].args[0]).toEqual(payload);
+            describe('on success', function() {
+                var payload, start, end;
+
+                beforeEach(function() {
+                    start = moment().format();
+                    end = moment().add('hour', 1).format();
+                    payload = [{
+                        start:start,
+                        end:end
+                    }];
+                    context.success(payload);
+                });
+
+                it('call presenter', function() {
+                    expect(presenter.calls[0].args[0]).toEqual(payload);
+                });
+
+                it('convert date strings to moment.js', function() {
+                    expect(presenter.calls[0].args[0][0].start.format()).toEqual(start);
+                    expect(presenter.calls[0].args[0][0].end.format()).toEqual(end);
+                });
             })
         });
     });

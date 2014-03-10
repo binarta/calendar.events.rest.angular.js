@@ -45,7 +45,13 @@ function CalendarEventSourceFactory(usecaseAdapterFactory, restServiceHandler, c
                     }
                 }
             };
-            ctx.success = query.presenter;
+            ctx.success = function(evts) {
+                query.presenter(evts.map(function(evt) {
+                    evt.start = moment(evt.start);
+                    evt.end = moment(evt.end);
+                    return evt;
+                }));
+            };
             restServiceHandler(ctx);
         }
     }
