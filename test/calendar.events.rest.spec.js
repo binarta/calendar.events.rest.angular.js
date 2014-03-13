@@ -130,14 +130,16 @@ describe('calendar.events.rest', function() {
     });
 
     describe('given an event deleter', function() {
+
         beforeEach(inject(function(calendarEventDeleter) {
             deleter = calendarEventDeleter;
             configStub.baseUri = 'base-uri/';
         }));
 
         describe('when deleting', function() {
+            var success = jasmine.createSpy('success');
             beforeEach(function() {
-                deleter({id:'id'});
+                deleter({id:'id'}, {success: success});
             });
 
             it('then context is created', function() {
@@ -154,14 +156,8 @@ describe('calendar.events.rest', function() {
                 expect(rest.calls[0].args[0]).toEqual(context);
             });
 
-            describe('on success', function() {
-                beforeEach(function() {
-                    context.success();
-                });
-
-                it('test', function() {
-                    expect(dispatcher['calendar.event.removed']).toEqual('success');
-                })
+            it('success callback is provided by presenter', function() {
+                expect(context.success).toEqual(success);
             });
         });
     });
@@ -175,6 +171,7 @@ describe('calendar.events.rest', function() {
         describe('when updating', function() {
             var event;
             var start = moment().format(), end = moment().format();
+            var success = jasmine.createSpy('success');
 
             beforeEach(function() {
                 event = {
@@ -182,11 +179,11 @@ describe('calendar.events.rest', function() {
                     start: start,
                     end: end
                 };
-                updater(event);
+                updater(event, $scope, {success:success});
             });
 
             it('context is created', function() {
-                expect(usecaseAdapter.calls[0].args[0]).toEqual({});
+                expect(usecaseAdapter.calls[0].args[0]).toEqual($scope);
             });
 
             it('http params are configured', function() {
@@ -204,14 +201,8 @@ describe('calendar.events.rest', function() {
                 expect(rest.calls[0].args[0]).toEqual(context);
             });
 
-            describe('on success', function() {
-                beforeEach(function() {
-                    context.success();
-                });
-
-                it('then event is fired', inject(function(topicMessageDispatcherMock) {
-                    expect(topicMessageDispatcherMock['calendar.event.updated']).toEqual('success');
-                }));
+            it('test', function() {
+                expect(context.success).toEqual(success);
             });
         });
     });

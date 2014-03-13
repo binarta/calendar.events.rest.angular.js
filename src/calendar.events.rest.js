@@ -58,35 +58,31 @@ function CalendarEventSourceFactory(usecaseAdapterFactory, restServiceHandler, c
 }
 
 function CalendarEventDeleterFactory(usecaseAdapterFactory, restServiceHandler, config, topicMessageDispatcher) {
-    return function (args) {
+    return function (args, presenter) {
         var ctx = usecaseAdapterFactory({});
         ctx.params = {
             method: 'DELETE',
             withCredentials: true,
             url: (config.baseUri || '') + 'api/entity/calendarevent/' + args.id
         };
-        ctx.success = function () {
-            topicMessageDispatcher.fire('calendar.event.removed', 'success');
-        };
+        ctx.success = presenter.success;
         restServiceHandler(ctx);
     }
 }
 
 function CalendarEventUpdaterFactory(usecaseAdapterFactory, restServiceHandler, config, topicMessageDispatcher) {
-    return function (event) {
+    return function (event, $scope, presenter) {
         event.context = 'update';
         event.start = moment(event.start).toISOString();
         event.end = moment(event.end).toISOString();
-        var context = usecaseAdapterFactory({});
+        var context = usecaseAdapterFactory($scope);
         context.params = {
             method: 'POST',
             withCredentials: true,
             url: (config.baseUri || '') + 'api/entity/calendarevent',
             data: event
         };
-        context.success = function () {
-            topicMessageDispatcher.fire('calendar.event.updated', 'success');
-        };
+        context.success = presenter.success;
         restServiceHandler(context);
     }
 }
