@@ -33,39 +33,55 @@ describe('calendar.events.rest', function() {
             var event = {};
             var start = moment(1).format();
             var end = moment(1).format();
-            var presenter = jasmine.createSpyObj('presenter', ['success']);
 
             beforeEach(function() {
                 event.start = start;
                 event.end = end;
-                writer(event, $scope, presenter);
             });
 
-            it('then context is created', function() {
-                expect(usecaseAdapter.calls[0].args[0]).toEqual($scope);
-            });
+            describe('with presenter', function () {
+                var presenter = jasmine.createSpyObj('presenter', ['success']);
 
-            it('and context is populated with rest params', function() {
-                expect(context.params.method).toEqual('PUT');
-                expect(context.params.withCredentials).toBeTruthy();
-                expect(context.params.url).toEqual('base-uri/api/entity/calendarevent');
-                expect(context.params.data).toEqual(event);
-                expect(context.params.data.start).toEqual(moment(start).toISOString());
-                expect(context.params.data.end).toEqual(moment(end).toISOString());
-            });
-
-            it('and rest call is executed', function() {
-                expect(rest.calls[0].args[0]).toEqual(context);
-            });
-
-            describe('on success', function() {
                 beforeEach(function() {
-                    context.success();
+                    writer(event, $scope, presenter);
                 });
 
-                it('then event is fired', function() {
-                    expect(presenter.success.calls[0]).toBeDefined();
-                })
+                it('then context is created', function() {
+                    expect(usecaseAdapter.calls[0].args[0]).toEqual($scope);
+                });
+
+                it('and context is populated with rest params', function() {
+                    expect(context.params.method).toEqual('PUT');
+                    expect(context.params.withCredentials).toBeTruthy();
+                    expect(context.params.url).toEqual('base-uri/api/entity/calendarevent');
+                    expect(context.params.data).toEqual(event);
+                    expect(context.params.data.start).toEqual(moment(start).toISOString());
+                    expect(context.params.data.end).toEqual(moment(end).toISOString());
+                });
+
+                it('and rest call is executed', function() {
+                    expect(rest.calls[0].args[0]).toEqual(context);
+                });
+
+                describe('on success', function() {
+                    beforeEach(function() {
+                        context.success();
+                    });
+
+                    it('then event is fired', function() {
+                        expect(presenter.success.calls[0]).toBeDefined();
+                    })
+                });
+            });
+
+            describe('without presenter', function () {
+                beforeEach(function() {
+                    writer(event, $scope, undefined);
+                });
+
+                it('context has no success handler', function () {
+                    expect(context.success).toBeUndefined();
+                });
             });
         });
     });

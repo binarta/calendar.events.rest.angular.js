@@ -18,7 +18,7 @@ function CalendarEventWriterFactory(usecaseAdapterFactory, restServiceHandler, c
             data: event,
             url: (config.baseUri || '') + 'api/entity/calendarevent'
         };
-        ctx.success = presenter.success;
+        if(presenter && presenter.success) ctx.success = presenter.success;
         restServiceHandler(ctx);
 
         function formatDates(obj, fields) {
