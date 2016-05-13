@@ -1,13 +1,13 @@
 angular.module('calendar.events.sources', ['calendar.events.rest']);
-angular.module('calendar.events.rest', [])
-    .factory('calendarEventWriter', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'topicMessageDispatcher', CalendarEventWriterFactory])
-    .factory('calendarEventSourceFactory', ['usecaseAdapterFactory', 'restServiceHandler', 'config', CalendarEventSourceFactory])
-    .factory('calendarEventDeleter', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'topicMessageDispatcher', CalendarEventDeleterFactory])
-    .factory('calendarEventUpdater', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'topicMessageDispatcher', CalendarEventUpdaterFactory])
+angular.module('calendar.events.rest', ['angular.usecase.adapter', 'rest.client', 'config', 'angularMoment'])
+    .factory('calendarEventWriter', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'moment', CalendarEventWriterFactory])
+    .factory('calendarEventSourceFactory', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'moment', CalendarEventSourceFactory])
+    .factory('calendarEventDeleter', ['usecaseAdapterFactory', 'restServiceHandler', 'config', CalendarEventDeleterFactory])
+    .factory('calendarEventUpdater', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'moment', CalendarEventUpdaterFactory])
     .factory('calendarEventViewer', ['usecaseAdapterFactory', 'config', 'restServiceHandler', CalendarEventViewerFactory]);
 
 
-function CalendarEventWriterFactory(usecaseAdapterFactory, restServiceHandler, config, topicMessageDispatcher) {
+function CalendarEventWriterFactory(usecaseAdapterFactory, restServiceHandler, config, moment) {
     return function (event, $scope, presenter) {
 
         var ctx = usecaseAdapterFactory($scope);
@@ -29,7 +29,7 @@ function CalendarEventWriterFactory(usecaseAdapterFactory, restServiceHandler, c
     }
 }
 
-function CalendarEventSourceFactory(usecaseAdapterFactory, restServiceHandler, config) {
+function CalendarEventSourceFactory(usecaseAdapterFactory, restServiceHandler, config, moment) {
     return function (it) {
         return function (query) {
             var ctx = usecaseAdapterFactory({});
@@ -57,7 +57,7 @@ function CalendarEventSourceFactory(usecaseAdapterFactory, restServiceHandler, c
     }
 }
 
-function CalendarEventDeleterFactory(usecaseAdapterFactory, restServiceHandler, config, topicMessageDispatcher) {
+function CalendarEventDeleterFactory(usecaseAdapterFactory, restServiceHandler, config) {
     return function (args, presenter) {
         var ctx = usecaseAdapterFactory({});
         ctx.params = {
@@ -70,7 +70,7 @@ function CalendarEventDeleterFactory(usecaseAdapterFactory, restServiceHandler, 
     }
 }
 
-function CalendarEventUpdaterFactory(usecaseAdapterFactory, restServiceHandler, config, topicMessageDispatcher) {
+function CalendarEventUpdaterFactory(usecaseAdapterFactory, restServiceHandler, config, moment) {
     return function (event, $scope, presenter) {
         event.context = 'update';
         event.start = moment(event.start).toISOString();

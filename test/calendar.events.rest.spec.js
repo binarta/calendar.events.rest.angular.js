@@ -4,22 +4,19 @@ describe('calendar.events.rest', function() {
     var context;
     var rest;
     var configStub;
-    var dispatcher;
     var $scope;
 
     beforeEach(module('calendar.events.sources'));
     beforeEach(module('angular.usecase.adapter'));
     beforeEach(module('rest.client'));
     beforeEach(module('config'));
-    beforeEach(module('notifications'));
 
-    beforeEach(inject(function($rootScope, usecaseAdapterFactory, restServiceHandler, config, topicMessageDispatcherMock) {
+    beforeEach(inject(function($rootScope, usecaseAdapterFactory, restServiceHandler, config) {
         context = {};
         usecaseAdapter = usecaseAdapterFactory;
         usecaseAdapter.andReturn(context);
         rest = restServiceHandler;
         configStub = config;
-        dispatcher = topicMessageDispatcherMock;
         $scope = $rootScope.$new();
     }));
 
