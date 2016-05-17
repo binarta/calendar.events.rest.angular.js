@@ -14,7 +14,7 @@ describe('calendar.events.rest', function() {
     beforeEach(inject(function($rootScope, usecaseAdapterFactory, restServiceHandler, config) {
         context = {};
         usecaseAdapter = usecaseAdapterFactory;
-        usecaseAdapter.andReturn(context);
+        usecaseAdapter.and.returnValue(context);
         rest = restServiceHandler;
         configStub = config;
         $scope = $rootScope.$new();
@@ -44,7 +44,7 @@ describe('calendar.events.rest', function() {
                 });
 
                 it('then context is created', function() {
-                    expect(usecaseAdapter.calls[0].args[0]).toEqual($scope);
+                    expect(usecaseAdapter.calls.argsFor(0)[0]).toEqual($scope);
                 });
 
                 it('and context is populated with rest params', function() {
@@ -57,7 +57,7 @@ describe('calendar.events.rest', function() {
                 });
 
                 it('and rest call is executed', function() {
-                    expect(rest.calls[0].args[0]).toEqual(context);
+                    expect(rest.calls.argsFor(0)[0]).toEqual(context);
                 });
 
                 describe('on success', function() {
@@ -66,7 +66,7 @@ describe('calendar.events.rest', function() {
                     });
 
                     it('then event is fired', function() {
-                        expect(presenter.success.calls[0]).toBeDefined();
+                        expect(presenter.success.calls.argsFor(0)).toBeDefined();
                     })
                 });
             });
@@ -101,7 +101,7 @@ describe('calendar.events.rest', function() {
             });
 
             it('then context is created', function() {
-                expect(usecaseAdapter.calls[0].args[0]).toEqual({});
+                expect(usecaseAdapter.calls.argsFor(0)[0]).toEqual({});
             });
 
             it('and context is populated with rest params', function() {
@@ -114,7 +114,7 @@ describe('calendar.events.rest', function() {
             });
 
             it('then rest call is executed', function() {
-                expect(rest.calls[0].args[0]).toEqual(context);
+                expect(rest.calls.argsFor(0)[0]).toEqual(context);
             });
 
             describe('on success', function() {
@@ -131,12 +131,12 @@ describe('calendar.events.rest', function() {
                 });
 
                 it('call presenter', function() {
-                    expect(presenter.calls[0].args[0]).toEqual(payload);
+                    expect(presenter.calls.argsFor(0)[0]).toEqual(payload);
                 });
 
                 it('convert date strings to moment.js', function() {
-                    expect(presenter.calls[0].args[0][0].start.format()).toEqual(start);
-                    expect(presenter.calls[0].args[0][0].end.format()).toEqual(end);
+                    expect(presenter.calls.argsFor(0)[0][0].start.format()).toEqual(start);
+                    expect(presenter.calls.argsFor(0)[0][0].end.format()).toEqual(end);
                 });
             })
         });
@@ -156,7 +156,7 @@ describe('calendar.events.rest', function() {
             });
 
             it('then context is created', function() {
-                expect(usecaseAdapter.calls[0].args[0]).toEqual({});
+                expect(usecaseAdapter.calls.argsFor(0)[0]).toEqual({});
             });
 
             it('and context is populated with rest params', function() {
@@ -166,7 +166,7 @@ describe('calendar.events.rest', function() {
             });
 
             it('and rest call is executed', function() {
-                expect(rest.calls[0].args[0]).toEqual(context);
+                expect(rest.calls.argsFor(0)[0]).toEqual(context);
             });
 
             it('success callback is provided by presenter', function() {
@@ -196,7 +196,7 @@ describe('calendar.events.rest', function() {
             });
 
             it('context is created', function() {
-                expect(usecaseAdapter.calls[0].args[0]).toEqual($scope);
+                expect(usecaseAdapter.calls.argsFor(0)[0]).toEqual($scope);
             });
 
             it('http params are configured', function() {
@@ -211,7 +211,7 @@ describe('calendar.events.rest', function() {
             });
 
             it('http call is executed', function() {
-                expect(rest.calls[0].args[0]).toEqual(context);
+                expect(rest.calls.argsFor(0)[0]).toEqual(context);
             });
 
             it('test', function() {
@@ -233,7 +233,7 @@ describe('calendar.events.rest', function() {
         }));
 
         it('then context is created', function() {
-            expect(usecaseAdapter.calls[0].args[0]).toEqual($scope);
+            expect(usecaseAdapter.calls.argsFor(0)[0]).toEqual($scope);
         });
 
         it('http params are populated', function() {
@@ -243,7 +243,7 @@ describe('calendar.events.rest', function() {
         });
 
         it('http call is executec', function() {
-            expect(rest.calls[0].args[0]).toEqual(context);
+            expect(rest.calls.argsFor(0)[0]).toEqual(context);
         });
 
         describe('on success', function() {
