@@ -4,8 +4,31 @@ angular.module('calendar.events.rest', ['angular.usecase.adapter', 'rest.client'
     .factory('calendarEventSourceFactory', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'moment', CalendarEventSourceFactory])
     .factory('calendarEventDeleter', ['usecaseAdapterFactory', 'restServiceHandler', 'config', CalendarEventDeleterFactory])
     .factory('calendarEventUpdater', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'moment', CalendarEventUpdaterFactory])
-    .factory('calendarEventViewer', ['usecaseAdapterFactory', 'config', 'restServiceHandler', CalendarEventViewerFactory]);
+    .factory('calendarEventViewer', ['usecaseAdapterFactory', 'config', 'restServiceHandler', CalendarEventViewerFactory])
+    .service('calendarEventGateway', ['restServiceHandler', 'config', CalendarEventGateway]);
 
+function CalendarEventGateway(rest, config) {
+    this.findAllBetweenStartDateAndEndDate = function(request, response) {
+        rest({
+            params:{
+                method:'POST',
+                url:config.baseUri + 'api/usecase',
+                data:{
+                    headers:{
+                        namespace:config.namespace,
+                        usecase:'find.all.calendar.events.between.start.date.and.end.date'
+                    },
+                    payload:{
+                        type:request.type,
+                        startDate:request.startDate.format('YYYY-MM-DD'),
+                        endDate:request.endDate.format('YYYY-MM-DD')
+                    }
+                }
+            },
+            success:response.success
+        });
+    }
+}
 
 function CalendarEventWriterFactory(usecaseAdapterFactory, restServiceHandler, config, moment) {
     return function (event, $scope, presenter) {

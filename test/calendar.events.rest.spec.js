@@ -1,5 +1,5 @@
 describe('calendar.events.rest', function() {
-    var writer, source, deleter, updater;
+    var writer, source, deleter, updater, request, response;
     var usecaseAdapter;
     var context;
     var rest;
@@ -13,6 +13,8 @@ describe('calendar.events.rest', function() {
 
     beforeEach(inject(function($rootScope, usecaseAdapterFactory, restServiceHandler, config) {
         context = {};
+        request = {};
+        response = {};
         usecaseAdapter = usecaseAdapterFactory;
         usecaseAdapter.and.returnValue(context);
         rest = restServiceHandler;
@@ -79,6 +81,47 @@ describe('calendar.events.rest', function() {
                 it('context has no success handler', function () {
                     expect(context.success).toBeUndefined();
                 });
+            });
+        });
+    });
+
+    describe('calendar event gateway', function() {
+        var gateway, events;
+
+        beforeEach(inject(function(calendarEventGateway) {
+            gateway = calendarEventGateway;
+
+            configStub.baseUri = 'http://example.org/';
+            configStub.namespace = 'n';
+        }));
+
+        describe('find all between start date and end date', function() {
+            beforeEach(function() {
+                response.success = function(it) {
+                    events = it;
+                };
+
+                gateway.findAllBetweenStartDateAndEndDate({
+                    type:'t',
+                    startDate:moment().year(2016).month(4).date(1),
+                    endDate:moment().year(2016).month(5).date(1)
+                }, response);
+                request = rest.calls.argsFor(0)[0];
+            });
+
+            it('performs rest call', function() {
+                expect(request.params.method).toEqual('POST');
+                expect(request.params.url).toEqual('http://example.org/api/usecase');
+                expect(request.params.data.headers.namespace).toEqual('n');
+                expect(request.params.data.headers.usecase).toEqual('find.all.calendar.events.between.start.date.and.end.date');
+                expect(request.params.data.payload.type).toEqual('t');
+                expect(request.params.data.payload.startDate).toEqual('2016-05-01');
+                expect(request.params.data.payload.endDate).toEqual('2016-06-01');
+            });
+
+            it('on success events are passed to the response', function() {
+                request.success('events');
+                expect(events).toEqual('events');
             });
         });
     });
