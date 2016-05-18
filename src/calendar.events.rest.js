@@ -96,6 +96,7 @@ function CalendarEventDeleterFactory(usecaseAdapterFactory, restServiceHandler, 
 function CalendarEventUpdaterFactory(usecaseAdapterFactory, restServiceHandler, config, moment) {
     return function (event, $scope, presenter) {
         event.context = 'update';
+        event.treatInputAsId = true;
         event.start = moment(event.start).toISOString();
         event.end = moment(event.end).toISOString();
         var context = usecaseAdapterFactory($scope);

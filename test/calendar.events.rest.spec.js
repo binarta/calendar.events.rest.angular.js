@@ -247,10 +247,10 @@ describe('calendar.events.rest', function() {
                 expect(context.params.withCredentials).toBeTruthy();
                 expect(context.params.url).toEqual('base-uri/api/entity/calendarevent');
                 expect(context.params.data).toEqual(event);
-                expect(context.params.data).toEqual(event);
                 expect(context.params.data.start).toEqual(moment(start).toISOString());
                 expect(context.params.data.end).toEqual(moment(end).toISOString());
                 expect(context.params.data.context).toEqual('update');
+                expect(context.params.data.treatInputAsId).toEqual(true);
             });
 
             it('http call is executed', function() {
