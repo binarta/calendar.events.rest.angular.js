@@ -1,5 +1,5 @@
 angular.module('calendar.events.sources', ['calendar.events.rest']);
-angular.module('calendar.events.rest', ['angular.usecase.adapter', 'rest.client', 'config', 'angularMoment'])
+angular.module('calendar.events.rest', ['angular.usecase.adapter', 'rest.client', 'config', 'momentx'])
     .factory('calendarEventWriter', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'moment', CalendarEventWriterFactory])
     .factory('calendarEventSourceFactory', ['usecaseAdapterFactory', 'restServiceHandler', 'config', 'moment', CalendarEventSourceFactory])
     .factory('calendarEventDeleter', ['usecaseAdapterFactory', 'restServiceHandler', 'config', CalendarEventDeleterFactory])
