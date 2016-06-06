@@ -1,0 +1,5 @@
+{
+  "default": {
+    "calendar.events.rest" : "bower_components/binarta.calendar.events.rest.angular/src/calendar.events.rest.js"
+  }
+}
